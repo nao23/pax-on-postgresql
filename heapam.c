@@ -110,7 +110,7 @@ static bool ConditionalMultiXactIdWait(MultiXactId multi,
 						   uint16 infomask);
 
 
-/* add for Special Exercise */
+/* for PAX */
 static void pax_heapgettup_pagemode(HeapScanDesc scan, ScanDirection dir, int nkeys, ScanKey key);
 static void scan_paxpage(HeapScanDesc scan, Page pax_dp);
 static void construct_nsmtuple(Page pax_dp, int nsm_ncols, HeapTupleHeader t_header, OffsetNumber lineoff);

@@ -52,7 +52,7 @@ typedef struct HeapScanDescData
 	int			rs_ntuples;		/* number of visible tuples on page */
 	OffsetNumber rs_vistuples[MaxHeapTuplesPerPage];	/* their offsets */
 
-	/* for PAX layout */
+	/* for PAX */
 	bool rs_pax; /* true if page designed to PAX layout */
 	int rs_nargs;
 	int rs_paxscan_arg[FUNC_MAX_ARGS];

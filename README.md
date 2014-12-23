@@ -7,7 +7,8 @@ PAXというページレイアウトモデルをPostgreSQLに実装すること�
 
 ## 対象とするテーブル
 今回対象とするテーブルはinteger型のデータのみで構成されるテーブルです。
-また、カラム数が大きくなるとエラーが発生してしまうため32x32程度でないとできません。
+カラム数が大きくなるとエラーが発生してしまうため32x32程度でないとできません。
+tools/nsm_to_pax.cでPAXレイアウトのページに変換する。
 
 ## 対象とするクエリ
 select id from test where a1 = 100 and a2 = 200;
@@ -31,26 +32,19 @@ SeqNext内で、heap_getnextを呼ぶ前にcreate_paxscan_argsを呼ぶように
 
 ### postgresql-9.3.5/src/backend/access/heap/heapam.c
 以下の関数を変更
-* initscan ... HeapScanDescData構造体の初期化を行うので、新たに追加したメンバに対する初期化処理を追加
-* heap_getnext ... NSMレイアウトのテーブルならheapgettup_pagemodeを、PAXレイアウトのテーブルなら
+* initscan 
+  - HeapScanDescData構造体の初期化を行うので、新たに追加したメンバに対する初期化処理を追加
+* heap_getnext 
+  - NSMレイアウトのテーブルならheapgettup_pagemodeを、PAXレイアウトのテーブルなら
 pax_heapgettup_pagemodeを呼ぶように変更
-* heapgettup_pagemode ... PAXとの比較のために、tuple->t_dataをmalloc & memcpyするように変更
+* heapgettup_pagemode 
+  - PAXとの比較のために、tuple->t_dataをmalloc & memcpyするように変更
 
 以下の関数を新たに追加
 * pax_heapgettup_pagemode(HeapScanDesc scan, ScanDirection dir, int nkeys, ScanKey key);
-
-PAXレイアウトのテーブルに対して、スキャンを行い、その結果をもとにタプルを返す関数
+  - PAXレイアウトのテーブルに対して、スキャンを行い、その結果をもとにタプルを返す関数
 * scan_paxpage(HeapScanDesc scan, Page pax_dp);
-
-PAXレイアウトのページをスキャンする関数
+  - PAXレイアウトのページをスキャンする関数
 * construct_nsmtuple(Page pax_dp, int nsm_ncols, HeapTupleHeader t_header, OffsetNumber lineoff);
-
-スキャンした結果から、NSMタプルを作成する関数
-
-
-
-
-
-
-
+  - スキャンした結果から、NSMタプルを作成する関数
 
